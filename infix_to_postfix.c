@@ -7,7 +7,7 @@ int isempty();
 int isoperator(char c);
 
 
-char stack[50];
+char stack[500];
 int top=-1;
 
 int getpriority(char c)
