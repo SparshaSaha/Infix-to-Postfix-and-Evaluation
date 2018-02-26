@@ -5,7 +5,7 @@
 int getpriority(char c);
 int isempty();
 int isoperator(char c);
-
+int evaluate_stack(char *c);
 
 char stack[500];
 int top=-1;
@@ -47,11 +47,14 @@ int main()
 {
   char x[100];
   scanf("%s",x);
-
+  char k[200];
+  int point=0;
   for(int i=0;x[i]!='\0';i++)
   {
-    if( isoperator(x[i])==0)
+    if( isoperator(x[i])==0){
     printf("%c",x[i]);
+    k[point++]=x[i];
+  }
     else{
 
       if(isempty()==1 && x[i]!=')')
@@ -67,15 +70,19 @@ int main()
       stack[++top]=x[i];
       else if(isempty()==0 && getpriority(stack[top])>=getpriority(x[i]))
       {
-        while(isempty()==0 && getpriority(stack[top])>=getpriority(x[i]))
+        while(isempty()==0 && getpriority(stack[top])>=getpriority(x[i])){
         printf("%c",stack[top--]);
+        k[point++]=stack[top+1];
+      }
 
         stack[++top]=x[i];
       }
       else if(x[i]==')')
       {
-        while(stack[top]!='(')
+        while(stack[top]!='('){
         printf("%c",stack[top--]);
+        k[point++]=stack[top+1];
+      }
 
         top--;
       }
@@ -85,7 +92,35 @@ int main()
 while(isempty()==0)
 {
   printf("%c",stack[top--]);
+  k[point++]=stack[top+1];
 }
 printf("\n\n");
 
+printf("The value of the expression is: %d\n",evaluate_stack(k));
+
+}
+
+int evaluate_stack(char *c)
+{
+  int st[200];
+  int to=-1;
+  for(int i=0;c[i]!='\0';i++)
+  {
+    if(isoperator(c[i])==0)
+    st[++to]=c[i];
+    else{
+      int y=st[to--]-48;
+      int x=st[to--]-48;
+      if(c[i]=='+')
+      st[++to]=x+y;
+      else if(c[i]=='-')
+      st[++to]=x-y;
+      else if(c[i]=='*')
+      st[++to]=x*y;
+      else
+      st[++to]=x/y;
+
+    }
+  }
+  return st[to];
 }
